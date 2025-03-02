@@ -10,6 +10,7 @@ import { TBuffer, TFrame } from "./constants/Types";
 import { Uint8ArrayToBase64 } from "./utils/Arrays";
 import { Resize } from "./utils/Images";
 import { GenerateSpritesheet } from "./utils/Spritesheet";
+// @ts-ignore
 import GIFUtils from "./utils/GIFUtils";
 
 interface IResize {
