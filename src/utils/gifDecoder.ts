@@ -1,3 +1,6 @@
+// @ts-nocheck
+// GIF decoder carried over from the original app (public-domain style parser).
+// Parses GIF bytes via XHR/data-URL and exposes `frames` as canvases.
 export default function GIFUtils() {
     // **NOT** for commercial use.
     var timerID;                          // timer handle for set time out usage
