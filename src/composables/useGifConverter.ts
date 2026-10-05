@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import JSZip from 'jszip'
 import type { IConverterProgress, ImageFormat, ISpritesheet, TBuffer } from '../types'
-import { decodeGifBuffer } from '../utils/gif'
+import { decodeAnimationBuffer } from '../utils/animated'
 import { resolveTargetSize, resizeImage } from '../utils/images'
 import { generateSpritesheet } from '../utils/spritesheet'
 import { sanitizeFileName } from '../utils/arrays'
@@ -28,7 +28,7 @@ export function useGifConverter() {
 		hasResults.value = false
 		error.value = null
 		spritesheets.value = []
-		progress.value = { current: 0, total: buffers.length, stage: 'Decoding GIFs', fileName: '' }
+		progress.value = { current: 0, total: buffers.length, stage: 'Decoding animations', fileName: '' }
 
 		const results: ISpritesheet[] = []
 		try {
@@ -42,7 +42,7 @@ export function useGifConverter() {
 					fileName: item.name,
 				}
 
-				const decoded = await decodeGifBuffer(item.buffer)
+				const decoded = await decodeAnimationBuffer(item.buffer, item.name)
 				const target = resolveTargetSize(decoded.width, decoded.height, options.width, options.height)
 
 				progress.value = {
@@ -94,7 +94,7 @@ export function useGifConverter() {
 				zip.file(sprite.json.name, sprite.json.content)
 			}
 			const blob = await zip.generateAsync({ type: 'blob' })
-			triggerBlobDownload(blob, `gif-to-spritesheets-${Date.now()}.zip`)
+			triggerBlobDownload(blob, `spritesheets-${Date.now()}.zip`)
 		} finally {
 			zipping.value = false
 		}

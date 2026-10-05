@@ -26,5 +26,9 @@ export function formatBytes(bytes: number, decimals = 1): string {
 }
 
 export function sanitizeFileName(name: string): string {
-	return name.replace(/\.gif$/i, '').replace(/[^\w-]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'sprite'
+	return name.replace(/\.(gif|webp)$/i, '').replace(/[^\w-]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'sprite'
+}
+
+export function stripAnimationExtension(name: string): string {
+	return name.replace(/\.(gif|webp)$/i, '')
 }

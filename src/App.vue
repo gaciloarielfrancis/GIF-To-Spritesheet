@@ -37,7 +37,7 @@ function clearAll(): void {
 	convertError.value = null
 }
 
-async function handleConvert(): Promise<void> {
+	async function handleConvert(): Promise<void> {
 	if (!canConvert.value) return
 	preparing.value = true
 	convertError.value = null
@@ -45,7 +45,7 @@ async function handleConvert(): Promise<void> {
 		const buffers: TBuffer[] = []
 		for (const file of files.value) {
 			const buffer = await fileToArrayBuffer(file)
-			buffers.push({ buffer, name: file.name.replace(/\.gif$/i, ''), size: file.size })
+			buffers.push({ buffer, name: file.name, size: file.size })
 		}
 		await converter.convert(buffers, {
 			width: Math.max(0, Math.floor(options.value.width || 0)),
@@ -70,7 +70,7 @@ function handleReset(): void {
 }
 
 const steps = [
-	{ n: '01', title: 'Drop GIFs', text: 'One or many — files never leave your browser.' },
+	{ n: '01', title: 'Drop animations', text: 'GIF or animated WebP — files never leave your browser.' },
 	{ n: '02', title: 'Tune output', text: 'Frame size, quality, format and grid columns.' },
 	{ n: '03', title: 'Export', text: 'Preview sheets, grab a ZIP with images + JSON.' },
 ]
@@ -92,12 +92,12 @@ const steps = [
 					<span class="size-1.5 animate-pulse rounded-full bg-lime-400"></span>
 					FREE · PRIVATE · NO UPLOAD — RUNS 100% LOCALLY
 				</p>
-				<h1 class="sr-only">GIF to Spritesheet — convert GIF animations to spritesheets in seconds</h1>
+				<h1 class="sr-only">GIF and WebP to Spritesheet — convert animations to spritesheets in seconds</h1>
 				<figure class="animate-fade-up stagger-1 mx-auto mt-6 w-full max-w-xl overflow-hidden rounded-3xl bg-black shadow-[0_0_90px_rgba(139,92,246,0.28)] ring-1 ring-white/15">
 					<img :src="logoUrl" alt="GIF to Spritesheet — convert animation to spritesheet" class="w-full" />
 				</figure>
 				<p class="animate-fade-up stagger-2 mx-auto mt-4 max-w-xl text-balance text-[15px] leading-relaxed text-zinc-400 sm:text-base">
-					Drop in animated GIFs and get game-ready sprite sheets plus TexturePacker-style frame data JSON —
+					Drop in animated GIFs or WebP files and get game-ready sprite sheets plus TexturePacker-style frame data JSON —
 					perfect for Phaser, PixiJS, Unity and CSS animations.
 				</p>
 				<div class="animate-fade-up stagger-3 mx-auto mt-6 grid max-w-2xl grid-cols-1 gap-2.5 text-left sm:grid-cols-3">
@@ -124,7 +124,7 @@ const steps = [
 						</button>
 					</div>
 
-					<p class="mb-2 text-xs font-bold uppercase tracking-widest text-zinc-500"><span class="text-lime-400">1 ·</span> Source GIFs</p>
+					<p class="mb-2 text-xs font-bold uppercase tracking-widest text-zinc-500"><span class="text-lime-400">1 ·</span> Source files</p>
 					<FileDropzone :files="files" :disabled="processing || preparing" @change="handleFilesChange" @remove="removeFile" />
 
 					<p class="mb-3 mt-6 text-xs font-bold uppercase tracking-widest text-zinc-500"><span class="text-lime-400">2 ·</span> Output settings</p>
@@ -137,8 +137,8 @@ const steps = [
 						@click="handleConvert"
 					>
 						<span v-if="preparing || processing">Working…</span>
-						<span v-else-if="files.length === 0">Add GIFs to convert</span>
-						<span v-else>⚡ Convert {{ files.length }} GIF{{ files.length > 1 ? 's' : '' }}</span>
+						<span v-else-if="files.length === 0">Add GIFs or WebP to convert</span>
+						<span v-else>⚡ Convert {{ files.length }} file{{ files.length > 1 ? 's' : '' }}</span>
 					</button>
 					<p class="mt-2.5 text-center text-[11px] text-zinc-500">Original size when width & height are 0 · quality applies to JPEG / WEBP</p>
 
@@ -171,7 +171,7 @@ const steps = [
 						</div>
 						<h2 class="mx-auto mt-5 max-w-md text-xl font-extrabold text-white">Your spritesheets will appear here</h2>
 						<p class="mx-auto mt-2 max-w-md text-sm leading-relaxed text-zinc-400">
-							Add GIFs on the left and hit convert. Each animation becomes one horizontal-strip sheet plus a JSON map
+							Add GIF or WebP animations on the left and hit convert. Each animation becomes one horizontal-strip sheet plus a JSON map
 							with <span class="font-mono text-zinc-200">x, y, w, h</span> per frame.
 						</p>
 						<div class="mx-auto mt-6 max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 text-left">

@@ -19,11 +19,11 @@ const rejected = ref<string | null>(null)
 
 function acceptFiles(list: FileList | File[]): void {
 	const incoming = Array.from(list)
-	const gifs = incoming.filter((f) => f.type === 'image/gif')
-	const bad = incoming.length - gifs.length
-	rejected.value = bad > 0 ? `${bad} non-GIF file${bad > 1 ? 's were' : ' was'} ignored — only .gif is supported.` : null
-	if (gifs.length === 0) return
-	emit('change', [...props.files, ...gifs])
+	const supported = incoming.filter((f) => f.type === 'image/gif' || f.type === 'image/webp' || /\.gif$/i.test(f.name) || /\.webp$/i.test(f.name))
+	const bad = incoming.length - supported.length
+	rejected.value = bad > 0 ? `${bad} unsupported file${bad > 1 ? 's were' : ' was'} ignored — only .gif and animated .webp are supported.` : null
+	if (supported.length === 0) return
+	emit('change', [...props.files, ...supported])
 }
 
 function onDrop(event: DragEvent): void {
@@ -46,7 +46,7 @@ function onPick(event: Event): void {
 		<div
 			role="button"
 			tabindex="0"
-			aria-label="Upload GIF files"
+			aria-label="Upload GIF or WebP files"
 			:class="[
 				'group relative flex min-h-[190px] cursor-pointer flex-col items-center justify-center gap-3 overflow-hidden rounded-2xl border-2 border-dashed px-6 py-8 text-center transition-all duration-200',
 				dragOver
@@ -62,7 +62,7 @@ function onPick(event: Event): void {
 			@keydown.enter="fileInput?.click()"
 			@keydown.space.prevent="fileInput?.click()"
 		>
-			<input ref="fileInput" type="file" accept="image/gif,.gif" multiple class="hidden" @change="onPick" />
+			<input ref="fileInput" type="file" accept="image/gif,image/webp,.gif,.webp" multiple class="hidden" @change="onPick" />
 
 			<div
 				:class="[
@@ -76,7 +76,7 @@ function onPick(event: Event): void {
 			</div>
 			<div>
 				<p class="font-semibold text-white">
-					{{ dragOver ? 'Drop your GIFs to add them' : 'Drag & drop GIFs here' }}
+					{{ dragOver ? 'Drop your animations to add them' : 'Drag & drop GIFs or WebP here' }}
 				</p>
 				<p class="mt-1 text-sm text-zinc-400">
 					or <span class="font-semibold text-lime-400 underline underline-offset-2">browse files</span>
@@ -85,6 +85,7 @@ function onPick(event: Event): void {
 			</div>
 			<div class="flex flex-wrap items-center justify-center gap-1.5">
 				<span class="rounded-md bg-white/5 px-2 py-1 font-mono text-[11px] text-zinc-400">.gif</span>
+				<span class="rounded-md bg-white/5 px-2 py-1 font-mono text-[11px] text-zinc-400">.webp</span>
 				<span class="rounded-md bg-white/5 px-2 py-1 font-mono text-[11px] text-zinc-400">batch convert</span>
 				<span class="rounded-md bg-white/5 px-2 py-1 font-mono text-[11px] text-zinc-400">no upload</span>
 			</div>
@@ -100,7 +101,7 @@ function onPick(event: Event): void {
 				:key="`${file.name}-${file.size}-${i}`"
 				class="animate-pop-in flex items-center gap-3 rounded-xl border border-white/10 bg-zinc-900/80 px-3 py-2.5"
 			>
-				<div class="grid size-9 shrink-0 place-items-center rounded-lg bg-lime-400/15 font-mono text-[10px] font-bold text-lime-300">GIF</div>
+				<div class="grid size-9 shrink-0 place-items-center rounded-lg bg-lime-400/15 font-mono text-[10px] font-bold text-lime-300">{{ /\.webp$/i.test(file.name) ? 'WEBP' : 'GIF' }}</div>
 				<div class="min-w-0 flex-1 leading-tight">
 					<p class="truncate text-sm font-medium text-white" :title="file.name">{{ file.name }}</p>
 					<p class="font-mono text-[11px] text-zinc-500">{{ formatBytes(file.size) }}</p>
